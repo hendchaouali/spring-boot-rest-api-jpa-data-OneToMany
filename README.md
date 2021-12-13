@@ -269,9 +269,9 @@ L’entité « Artist » est mappé à une table nommée « artist » dans la ba
 
 – l'annotation **@JsonIgnore** est utilisé au niveau du champ pour marquer une propriété ou une liste de propriétés à ignorer.
 
-– l'annotation **CascadeType.ALL** signifie que la persistance propagera (en cascade) toutes les opérations EntityManager (PERSIST, REMOVE, REFRESH, MERGE, DETACH) aux entités associées.
+– **CascadeType.ALL** signifie que la persistance propagera (en cascade) toutes les opérations EntityManager (PERSIST, REMOVE, REFRESH, MERGE, DETACH) aux entités associées.
 
-– l'annotation **orphanRemoval** est un tout chose spécifique à l'ORM. Il marque que l'entité "enfant" doit être supprimée lorsqu'elle n'est plus référencée à partir de l'entité "parent", par exemple. lorsque vous supprimez l'entité enfant de la collection correspondante de l'entité parent.
+– **orphanRemoval** est spécifique à l'ORM. Il marque que l'entité "enfant" doit être supprimée lorsqu'elle n'est plus référencée à partir de l'entité "parent", par exemple. lorsque vous supprimez l'entité enfant de la collection correspondante de l'entité parent.
 
 ```java
 @Entity
