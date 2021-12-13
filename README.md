@@ -539,7 +539,7 @@ Ce contrôleur expose des end-point pour faire les CRUD (créer, récupérer, me
 | ------------- | ------------- | ------------- | ------------- |
 | POST  | /api/songs  | Créer une chanson  | 201  |
 | PUT  | /api/songs/{id}  | Modifier une chanson  | 200  |
-| GET  | /api/songs/{id}  | Récupérer une chanson | 200, 204  |
+| GET  | /api/songs/{id}  | Récupérer une chanson | 200  |
 | GET  | /api/songs  | Récupérer toutes les chansons  | 200, 204  |
 | GET  | /api/songs/category/{category} | Récupérer toutes les chansons par catégorie  | 200, 204  |
 | GET  | /api/songs/artist/{artistName} | Récupérer toutes les chansons par nom d'artiste  | 200, 204  |
@@ -636,7 +636,7 @@ Ce contrôleur expose des end-point pour faire les CRUD (créer, récupérer, me
 | ------------- | ------------- | ------------- | ------------- |
 | POST  | /api/artists  | Créer un artiste  | 201  |
 | PUT  | /api/artists/{id}  | Modifier un artiste  | 200  |
-| GET  | /api/artists/{id}  | Récupérer un artiste | 200, 204  |
+| GET  | /api/artists/{id}  | Récupérer un artiste | 200  |
 | GET  | /api/artists  | Récupérer tous les artistes  | 200, 204  |
 | DELETE  | /api/artists/{id}  | Supprimer un artiste | 204  |
 
