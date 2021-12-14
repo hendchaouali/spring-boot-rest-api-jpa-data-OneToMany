@@ -1,6 +1,6 @@
 package com.rest.playlist.service;
 
-import com.rest.playlist.exception.ResourceNotFoundException;
+import com.rest.playlist.web.exception.ResourceNotFoundException;
 import com.rest.playlist.model.Artist;
 import com.rest.playlist.repository.ArtistRepository;
 import org.slf4j.Logger;

@@ -1,9 +1,9 @@
 package com.rest.playlist.resource.artist;
 
-import com.rest.playlist.exception.ServiceExceptionHandler;
+import com.rest.playlist.web.exception.ServiceExceptionHandler;
 import com.rest.playlist.model.Artist;
 import com.rest.playlist.repository.ArtistRepository;
-import com.rest.playlist.resource.ArtistResource;
+import com.rest.playlist.web.resource.ArtistResource;
 import com.rest.playlist.service.IArtistService;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,6 +22,7 @@ import java.util.List;
 import static com.rest.playlist.TestUtils.asJsonString;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -68,11 +69,12 @@ public class ArtistResourceIntegrationTest {
     }
 
     @Test
-    public void testGetNoContentArtists() throws Exception {
+    public void testEmptyListArtists() throws Exception {
         artistRepository.deleteAll();
         mockMvc.perform(get("/api/artists")
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNoContent());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(0)));
     }
 
     @Test

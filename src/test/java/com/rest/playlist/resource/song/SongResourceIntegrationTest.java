@@ -1,12 +1,12 @@
 package com.rest.playlist.resource.song;
 
 import com.rest.playlist.enums.SongCategory;
-import com.rest.playlist.exception.ServiceExceptionHandler;
+import com.rest.playlist.web.exception.ServiceExceptionHandler;
 import com.rest.playlist.model.Artist;
 import com.rest.playlist.model.Song;
 import com.rest.playlist.repository.ArtistRepository;
 import com.rest.playlist.repository.SongRepository;
-import com.rest.playlist.resource.SongResource;
+import com.rest.playlist.web.resource.SongResource;
 import com.rest.playlist.service.ISongService;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,6 +25,7 @@ import java.util.List;
 import static com.rest.playlist.TestUtils.asJsonString;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -87,11 +88,12 @@ public class SongResourceIntegrationTest {
     }
 
     @Test
-    public void testGetNoContentSongs() throws Exception {
+    public void testGetEmptyListSongs() throws Exception {
         songRepository.deleteAll();
         mockMvc.perform(get("/api/songs")
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNoContent());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(0)));
     }
 
     @Test

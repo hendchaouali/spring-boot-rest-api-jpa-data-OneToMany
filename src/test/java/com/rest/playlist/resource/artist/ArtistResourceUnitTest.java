@@ -1,8 +1,8 @@
 package com.rest.playlist.resource.artist;
 
-import com.rest.playlist.exception.ResourceNotFoundException;
+import com.rest.playlist.web.exception.ResourceNotFoundException;
 import com.rest.playlist.model.Artist;
-import com.rest.playlist.resource.ArtistResource;
+import com.rest.playlist.web.resource.ArtistResource;
 import com.rest.playlist.service.IArtistService;
 import org.junit.Before;
 import org.junit.Test;
@@ -66,12 +66,13 @@ public class ArtistResourceUnitTest {
     }
 
    @Test
-    public void testGetNoContentArtists() throws Exception {
+    public void testGetEmptyListArtists() throws Exception {
         when(playlistService.getAllArtists()).thenReturn(artistList);
 
         mockMvc.perform(get("/api/artists")
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNoContent());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(0)));
     }
 
 

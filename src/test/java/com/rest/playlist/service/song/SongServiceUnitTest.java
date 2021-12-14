@@ -1,7 +1,7 @@
 package com.rest.playlist.service.song;
 
 import com.rest.playlist.enums.SongCategory;
-import com.rest.playlist.exception.ResourceNotFoundException;
+import com.rest.playlist.web.exception.ResourceNotFoundException;
 import com.rest.playlist.model.Artist;
 import com.rest.playlist.model.Song;
 import com.rest.playlist.repository.ArtistRepository;

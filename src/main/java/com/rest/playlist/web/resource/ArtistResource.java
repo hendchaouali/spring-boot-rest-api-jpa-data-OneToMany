@@ -1,4 +1,4 @@
-package com.rest.playlist.resource;
+package com.rest.playlist.web.resource;
 
 import com.rest.playlist.model.Artist;
 import com.rest.playlist.service.IArtistService;
@@ -25,12 +25,7 @@ public class ArtistResource {
 
     @GetMapping
     public ResponseEntity<List<Artist>> getAllArtists() {
-
         List<Artist> artists = IArtistService.getAllArtists();
-
-        if (artists.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
         return new ResponseEntity<>(artists, HttpStatus.OK);
     }
 
