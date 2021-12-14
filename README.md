@@ -103,7 +103,6 @@ Contient des dépendances pour Spring Boot. Dans notre cas, nous sommes besoin d
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
-                <version>4.13.1</version>
                 <scope>test</scope>
             </dependency>
     		<dependency>
@@ -529,6 +528,16 @@ public class ArtistServiceImpl implements IArtistService {
 }
 ```
 ## VI. Resource
+
+- Les codes de réponse HTTP: 
+
+    * **200 Success** : La demande a réussi
+    * **201 Created** : La demande a été satisfaite et a entraîné la création d'une nouvelle ressource
+    * **204 No Content** : La demande a répondu à la demande mais n'a pas besoin de retourner un corps d'entité
+    * **400 Bad Request** : La requête n'a pas pu être comprise par le serveur en raison d'une syntaxe mal formée
+    * **404 Not Found** : Le serveur n'a rien trouvé correspondant à l'URI de la requête
+    * **409 Conflict** : La demande n'a pas pu être traitée en raison d'un conflit avec l'état actuel de la ressource
+
 * **SongResource**
 
 Ce contrôleur expose des end-point pour faire les CRUD (créer, récupérer, mettre à jour, supprimer et trouver) des chansons.
@@ -538,12 +547,12 @@ Ce contrôleur expose des end-point pour faire les CRUD (créer, récupérer, me
 | Méthode HTTP | URI | Description | Codes d'états http valides |
 | ------------- | ------------- | ------------- | ------------- |
 | POST  | /api/songs  | Créer une chanson  | 201  |
-| PUT  | /api/songs/{id}  | Modifier une chanson  | 200  |
-| GET  | /api/songs/{id}  | Récupérer une chanson | 200  |
-| GET  | /api/songs  | Récupérer toutes les chansons  | 200, 204  |
-| GET  | /api/songs/category/{category} | Récupérer toutes les chansons par catégorie  | 200, 204  |
-| GET  | /api/songs/artist/{artistName} | Récupérer toutes les chansons par nom d'artiste  | 200, 204  |
-| DELETE  | /api/songs/{id}  | Supprimer une chanson | 204  |
+| PUT  | /api/songs/{id}  | Modifier une chanson  | 200, 404  |
+| GET  | /api/songs/{id}  | Récupérer une chanson | 200, 404  |
+| GET  | /api/songs  | Récupérer toutes les chansons  | 200  |
+| GET  | /api/songs/category/{category} | Récupérer toutes les chansons par catégorie  | 200, 404  |
+| GET  | /api/songs/artist/{artistName} | Récupérer toutes les chansons par nom d'artiste  | 200  |
+| DELETE  | /api/songs/{id}  | Supprimer une chanson | 204, 404  |
 
 – l'annotation **@RestController** est utilisée pour définir un contrôleur.
 
@@ -571,12 +580,7 @@ public class SongResource {
 
     @GetMapping
     public ResponseEntity<List<Song>> getAllSongs() {
-
         List<Song> songs = ISongService.getAllSongs();
-
-        if (songs.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
         return new ResponseEntity<>(songs, HttpStatus.OK);
     }
 
@@ -584,9 +588,6 @@ public class SongResource {
     @GetMapping("/category/{category}")
     public ResponseEntity<List<Song>> getSongsByCategory(@PathVariable String category) {
         List<Song> songs = ISongService.getSongsByCategory(category);
-        if (songs.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
         return new ResponseEntity<>(songs, HttpStatus.OK);
     }
 
@@ -594,9 +595,6 @@ public class SongResource {
     @GetMapping("/artist/{name}")
     public ResponseEntity<List<Song>> getSongsByArtistName(@PathVariable String name) {
         List<Song> songs = ISongService.getSongsByArtistName(name);
-        if (songs.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
         return new ResponseEntity<>(songs, HttpStatus.OK);
     }
 
@@ -632,13 +630,13 @@ Ce contrôleur expose des end-point pour faire les CRUD (créer, récupérer, me
 
 ##### Points de terminaison d’API
 
-| Méthode HTTP | URI | Description | Codes d'états http valides |
+| Méthode HTTP | URI | Description | Codes d'états http |
 | ------------- | ------------- | ------------- | ------------- |
 | POST  | /api/artists  | Créer un artiste  | 201  |
-| PUT  | /api/artists/{id}  | Modifier un artiste  | 200  |
-| GET  | /api/artists/{id}  | Récupérer un artiste | 200  |
-| GET  | /api/artists  | Récupérer tous les artistes  | 200, 204  |
-| DELETE  | /api/artists/{id}  | Supprimer un artiste | 204  |
+| PUT  | /api/artists/{id}  | Modifier un artiste  | 200, 404  |
+| GET  | /api/artists/{id}  | Récupérer un artiste | 200, 404  |
+| GET  | /api/artists  | Récupérer tous les artistes  | 200  |
+| DELETE  | /api/artists/{id}  | Supprimer un artiste | 204, 404  |
 
 **@RequestMapping("/api/artists")** déclare que toutes les URL d'Apis dans le contrôleur commenceront par /api/artists.
 
@@ -658,12 +656,7 @@ public class ArtistResource {
 
     @GetMapping
     public ResponseEntity<List<Artist>> getAllArtists() {
-
         List<Artist> artists = IArtistService.getAllArtists();
-
-        if (artists.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
         return new ResponseEntity<>(artists, HttpStatus.OK);
     }
 
@@ -1449,12 +1442,13 @@ public class SongResourceUnitTest {
     }
 
    @Test
-    public void testGetNoContentSongs() throws Exception {
+    public void testGetEmptyListSongs() throws Exception {
         when(songService.getAllSongs()).thenReturn(songList);
 
         mockMvc.perform(get("/api/songs")
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNoContent());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(0)));
     }
     @Test
     public void testGetSongsByCategory() throws Exception {
@@ -1472,12 +1466,13 @@ public class SongResourceUnitTest {
     }
 
    @Test
-    public void testGetNoContentSongsByCategory() throws Exception {
+    public void testGetEmptyListSongsByCategory() throws Exception {
         when(songService.getSongsByCategory("CLASSICAL")).thenReturn(songList);
 
         mockMvc.perform(get("/api/songs/category/CLASSICAL")
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNoContent());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(0)));
     }
 
 
@@ -1690,12 +1685,13 @@ public class ArtistResourceUnitTest {
     }
 
    @Test
-    public void testGetNoContentArtists() throws Exception {
+    public void testGetEmptyListArtists() throws Exception {
         when(playlistService.getAllArtists()).thenReturn(artistList);
 
         mockMvc.perform(get("/api/artists")
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNoContent());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(0)));
     }
 
 
@@ -2168,11 +2164,12 @@ public class SongResourceIntegrationTest {
     }
 
     @Test
-    public void testGetNoContentSongs() throws Exception {
+    public void testGetEmptyListSongs() throws Exception {
         songRepository.deleteAll();
         mockMvc.perform(get("/api/songs")
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNoContent());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(0)));
     }
 
     @Test
@@ -2395,11 +2392,12 @@ public class ArtistResourceIntegrationTest {
     }
 
     @Test
-    public void testGetNoContentArtists() throws Exception {
+    public void testEmptyListArtists() throws Exception {
         artistRepository.deleteAll();
         mockMvc.perform(get("/api/artists")
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNoContent());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(0)));
     }
 
     @Test
@@ -2545,8 +2543,6 @@ public class ArtistResourceIntegrationTest {
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("message").value("Not found artist with id = 1000"));
     }
-
-
 }
 ```
 
